@@ -17,6 +17,7 @@ public class Server{
     TheServer server;
     private Consumer<Serializable> callback;
     MorraInfo gameInfo;
+    int stageCounter = 0;
 
 
     Server(Consumer<Serializable> call){
@@ -45,6 +46,13 @@ public class Server{
 
                     count++;
 
+                    if(clients.size() == 2)
+                    {
+                        gameInfo.have2Players = true;
+                        stageCounter++;
+                        callback.accept("Two players have joined");
+                        callback.accept("The game has begun");
+                    }
                 }
             }//end of try
             catch(Exception e) {
@@ -59,6 +67,7 @@ public class Server{
 
         Socket connection;
         int count;
+        int playerNumber;
         ObjectInputStream in;
         ObjectOutputStream out;
 
@@ -92,6 +101,25 @@ public class Server{
 
             while(true) {
                 try {
+                    //only one played has joined the server
+                    if(stageCounter == 0)
+                    {
+                        updateClients("Awaiting another player");
+                    }
+                    //Second player has joined the server
+                    if(stageCounter == 1)
+                    {
+                        if (gameInfo.have2Players) {
+                            updateClients("Two players have joined");
+                            updateClients("Welcome to the ancient game of Morra!");
+                        }
+                        stageCounter++;
+                    }
+                    //Game has begun
+                    if(stageCounter == 2)
+                    {
+
+                    }
                     String data = in.readObject().toString();
                     callback.accept("client #" + count + " sent: " + data);
                     updateClients("client #" + count + " said: " + data);
