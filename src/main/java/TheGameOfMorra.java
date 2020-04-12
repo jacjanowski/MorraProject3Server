@@ -66,28 +66,33 @@
 
 
 
+import java.awt.*;
 import java.util.HashMap;
 
+import javafx.scene.paint.Color;
+import javafx.scene.image.Image;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class TheGameOfMorra extends Application{
 
 
-	TextField s1,s2,s3,s4, c1;
+	TextField s1,s2,s3,s4, c1, portNum;
+	int numberOfClients = 0;
+	int portNumber;
 	Button serverChoice,clientChoice,b1;
 	HashMap<String, Scene> sceneMap;
 	GridPane grid;
@@ -96,6 +101,8 @@ public class TheGameOfMorra extends Application{
 	Scene startScene;
 	BorderPane startPane;
 	Server serverConnection;
+	MorraInfo gameInfo;
+
 
 	ListView<String> serverOutput;
 
@@ -110,11 +117,29 @@ public class TheGameOfMorra extends Application{
 		// TODO Auto-generated method stub
 		primaryStage.setTitle("The Networked Client/Server GUI Example");
 
-		this.serverChoice = new Button("Server");
-		this.serverChoice.setStyle("-fx-pref-width: 300px");
-		this.serverChoice.setStyle("-fx-pref-height: 300px");
+		gameInfo = new MorraInfo();
 
-		this.serverChoice.setOnAction(e->{ primaryStage.setScene(sceneMap.get("server"));
+		this.serverChoice = new Button("Server");
+		this.serverChoice.setMinSize(300,150);
+
+		this.serverChoice.setOnAction(e->{
+
+			if(this.portNum.getText().isEmpty())
+			{
+				Label warning = new Label("Please enter a port number");
+				warning.setTextFill(Color.RED);
+				warning.setFont(new Font("Arial", 30));
+				HBox warningBox = new HBox(100, warning);
+				//warning.setPadding(new Insets(0,0,0,200));
+				//warning.setTextFill(Color.RED);
+				warningBox.setAlignment(Pos.CENTER);
+				startPane.setBottom(warningBox);
+				return;//FIXME
+			}
+			this.portNumber = Integer.parseInt(this.portNum.getText());
+//			System.out.println("Port number: " + this.portNumber);
+
+			primaryStage.setScene(sceneMap.get("server"));
 			primaryStage.setTitle("This is the Server");
 			serverConnection = new Server(data -> {
 				Platform.runLater(()->{
@@ -127,11 +152,28 @@ public class TheGameOfMorra extends Application{
 
 
 
+		//Create label and textbox for entering port number to listen to
+		Label label1 = new Label("Port Number:");
+		label1.setFont(new Font("Arial", 20));
+		label1.setTextFill(Color.RED);
+		this.portNum = new TextField();
+		HBox portBox = new HBox();
+		portBox.getChildren().addAll(label1, this.portNum);
+		portBox.setSpacing(10);
 
+		//Create hbox for our server ON button
 		this.buttonBox = new HBox(400, serverChoice);
 		startPane = new BorderPane();
 		startPane.setPadding(new Insets(70));
 		startPane.setCenter(buttonBox);
+		startPane.setRight(portBox);
+
+		Image serverMainBG = new Image("serverMainBG.jpg");
+
+		startPane.setBackground(new Background(new BackgroundImage(serverMainBG, BackgroundRepeat.REPEAT
+				,BackgroundRepeat.REPEAT
+				,BackgroundPosition.DEFAULT
+				,BackgroundSize.DEFAULT)));
 
 		startScene = new Scene(startPane, 800,800);
 
@@ -140,6 +182,7 @@ public class TheGameOfMorra extends Application{
 
 		c1 = new TextField();
 		b1 = new Button("Send");
+
 
 
 		sceneMap = new HashMap<String, Scene>();
@@ -165,12 +208,15 @@ public class TheGameOfMorra extends Application{
 
 		BorderPane pane = new BorderPane();
 		pane.setPadding(new Insets(70));
-		pane.setStyle("-fx-background-color: coral");
-
 		pane.setCenter(serverOutput);
 
-		return new Scene(pane, 500, 400);
+		Image serverBG = new Image("serverBG.jpg");
 
+		pane.setBackground(new Background(new BackgroundImage(serverBG, BackgroundRepeat.REPEAT
+																	,BackgroundRepeat.REPEAT
+																	,BackgroundPosition.DEFAULT
+																	,BackgroundSize.DEFAULT)));
+		return new Scene(pane, 500, 400);
 
 	}
 

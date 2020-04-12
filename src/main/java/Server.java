@@ -86,18 +86,18 @@ public class Server{
                 System.out.println("Streams not open");
             }
 
-            updateClients("new client on server: client #"+count);
+            updateClients("new client on server: client #" + count);
 
             while(true) {
                 try {
                     String data = in.readObject().toString();
-                    callback.accept("client: " + count + " sent: " + data);
-                    updateClients("client #"+count+" said: "+data);
+                    callback.accept("client #" + count + " sent: " + data);
+                    updateClients("client #" + count + " said: " + data);
 
                 }
                 catch(Exception e) {
                     callback.accept("OOOOPPs...Something wrong with the socket from client: " + count + "....closing down!");
-                    updateClients("Client #"+count+" has left the server!");
+                    updateClients("Client #" + count + " has left the server!");
                     clients.remove(this);
                     break;
                 }
