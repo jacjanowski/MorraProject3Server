@@ -101,7 +101,7 @@ public class TheGameOfMorra extends Application{
 	Scene startScene;
 	BorderPane startPane;
 	Server serverConnection;
-	MorraInfo gameInfo;
+	//MorraInfo gameInfo;
 
 
 	ListView<String> serverOutput;
@@ -117,7 +117,7 @@ public class TheGameOfMorra extends Application{
 		// TODO Auto-generated method stub
 		primaryStage.setTitle("The Networked Client/Server GUI Example");
 
-		gameInfo = new MorraInfo();
+		//gameInfo = new MorraInfo();
 
 		this.serverChoice = new Button("Server");
 		this.serverChoice.setMinSize(300,150);

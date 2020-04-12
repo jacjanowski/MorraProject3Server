@@ -16,6 +16,7 @@ public class Server{
     ArrayList<ClientThread> clients = new ArrayList<ClientThread>();
     TheServer server;
     private Consumer<Serializable> callback;
+    MorraInfo gameInfo;
 
 
     Server(Consumer<Serializable> call){
@@ -23,6 +24,7 @@ public class Server{
         callback = call;
         server = new TheServer();
         server.start();
+        gameInfo = new MorraInfo();
     }
 
 
