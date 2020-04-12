@@ -49,9 +49,15 @@ public class Server{
                     if(clients.size() == 2)
                     {
                         gameInfo.have2Players = true;
-                        stageCounter++;
                         callback.accept("Two players have joined");
                         callback.accept("The game has begun");
+                        //stageCounter++;
+
+                        for(int i = 0; i < 2; i++)
+                        {
+                            clients.get(i).playerNumber = i+1;
+                            //System.out.println("Client #" + i + " is player #" + clients.get(i).playerNumber);
+                        }
                     }
                 }
             }//end of try
@@ -81,6 +87,7 @@ public class Server{
                 ClientThread t = clients.get(i);
                 try {
                     t.out.writeObject(message);
+                    t.out.reset();
                 }
                 catch(Exception e) {}
             }
@@ -105,6 +112,7 @@ public class Server{
                     if(stageCounter == 0)
                     {
                         updateClients("Awaiting another player");
+                        stageCounter++;
                     }
                     //Second player has joined the server
                     if(stageCounter == 1)
@@ -112,17 +120,20 @@ public class Server{
                         if (gameInfo.have2Players) {
                             updateClients("Two players have joined");
                             updateClients("Welcome to the ancient game of Morra!");
+                            updateClients("Choose a number 0-5");
+                            stageCounter++;
                         }
-                        stageCounter++;
+
                     }
                     //Game has begun
                     if(stageCounter == 2)
                     {
-
+                        String data = in.readObject().toString();
+                        callback.accept("client #" + count + " sent: " + data);
+                        updateClients("client #" + count + " said: " + data);
                     }
-                    String data = in.readObject().toString();
-                    callback.accept("client #" + count + " sent: " + data);
-                    updateClients("client #" + count + " said: " + data);
+
+
 
                 }
                 catch(Exception e) {
