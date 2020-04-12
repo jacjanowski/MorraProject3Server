@@ -112,26 +112,47 @@ public class Server{
                     if(stageCounter == 0)
                     {
                         updateClients("Awaiting another player");
-                        stageCounter++;
+                        stageCounter++;//go to next stage
                     }
-                    //Second player has joined the server
+                    //Wait for Second player to join the server
                     if(stageCounter == 1)
                     {
                         if (gameInfo.have2Players) {
                             updateClients("Two players have joined");
                             updateClients("Welcome to the ancient game of Morra!");
                             updateClients("Choose a number 0-5");
-                            stageCounter++;
+                            stageCounter++;//go to next stage
                         }
-
                     }
                     //Game has begun
-                    if(stageCounter == 2)
-                    {
-                        String data = in.readObject().toString();
-                        callback.accept("client #" + count + " sent: " + data);
-                        updateClients("client #" + count + " said: " + data);
+                    if(stageCounter == 2) {
+                        //FIXME this block of code doesn't work correctly
+                        //only recognizes player 2 sending info, uncomment and try it
+//                        String data = in.readObject().toString();
+//                        if(playerNumber == 1)
+//                        {
+//                            System.out.println("Player 1 sent info");
+//                        }
+//                        if(playerNumber == 2)
+//                            System.out.println("Player 2 sent info");
+//
+//                        System.out.println("StageCounter = " + stageCounter);
+//                        callback.accept("client #" + count + " sent: " + data);
+//                        updateClients("client #" + count + " said: " + data);
                     }
+
+                    //FIXME this block of code works correctly when its not in the if statement
+                    if(playerNumber == 1)
+                        System.out.println("Player 1 sent info");
+
+                    if(playerNumber == 2)
+                        System.out.println("Player 2 sent info");
+
+                    String data = in.readObject().toString();
+                    callback.accept("client #" + count + " sent: " + data);
+                    updateClients("client #" + count + " said: " + data);
+
+
 
 
 
