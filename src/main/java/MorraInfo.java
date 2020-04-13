@@ -4,7 +4,7 @@ public class MorraInfo implements Serializable
 {
     int p1Points, p2Points,p1Plays, p2Plays,p1Guess,p2Guess;
     int playerNumber;
-    Boolean have2Players;
+    Boolean have2Players, haveWinner;
 
     MorraInfo()
     {
@@ -14,7 +14,7 @@ public class MorraInfo implements Serializable
         p2Plays = 0;
         p1Guess = 0;
         p2Guess = 0;
-
+        haveWinner = false;
         have2Players = false;
     }
 

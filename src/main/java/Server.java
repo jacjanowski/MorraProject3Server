@@ -188,26 +188,6 @@ public class Server{
                     if(stageCounter == 3)
                     {
                         int result = gameInfo.evalPlay();
-                        if(result == 0) {
-                            updateClients("Both players guessed correct, no points awarded");
-                            callback.accept("Both players guessed correct, no points awarded");
-                        }
-                        if(result == 1)
-                        {
-                            updateClients("Player 1 is correct, player 1 gets 1 point");
-                            callback.accept("Player 1 is correct, gets 1 point!");
-                            gameInfo.p1Points++;
-                        }
-                        if(result == 2)
-                        {
-                            updateClients("Player 2 is correct, player 2 gets 1 point");
-                            callback.accept("Player 2 is correct, gets 1 point!");
-                            gameInfo.p2Points++;
-                        }
-                        if(result == 3) {
-                            updateClients("Neither player is correct, no points awarded");
-                            callback.accept("Neither player is correct, no points awarded");
-                        }
 
                         //tell player 1 what player 2 played and guessed
                         ClientThread t = clients.get(0);
@@ -235,9 +215,35 @@ public class Server{
                         }
                         catch(Exception e) {}
 
+                        int total = gameInfo.p1Plays + gameInfo.p2Plays;
+
+                        updateClients("The correct total is: " + total);
+
+                        //determine who guessed correctly if anyone, then reward points accordingly
+                        if(result == 0) {
+                            updateClients("Both players guessed correct, no points awarded");
+                            callback.accept("Both players guessed correct, no points awarded");
+                        }
+                        if(result == 1)
+                        {
+                            updateClients("Player 1 is correct, player 1 gets 1 point");
+                            callback.accept("Player 1 is correct, gets 1 point!");
+                            gameInfo.p1Points++;
+                        }
+                        if(result == 2)
+                        {
+                            updateClients("Player 2 is correct, player 2 gets 1 point");
+                            callback.accept("Player 2 is correct, gets 1 point!");
+                            gameInfo.p2Points++;
+                        }
+                        if(result == 3) {
+                            updateClients("Neither player is correct, no points awarded");
+                            callback.accept("Neither player is correct, no points awarded");
+                        }
+
                         //Display points to server and clients
                         callback.accept("Player 1 has " + gameInfo.p1Points + " points");
-                        callback.accept("Player 2 has " + gameInfo.p1Points + " points");
+                        callback.accept("Player 2 has " + gameInfo.p2Points + " points");
                         callback.accept("Beginning next round");
                         callback.accept("-------------------------");
                         updateClients("Player 1 Points: " + gameInfo.p1Points);
@@ -246,12 +252,20 @@ public class Server{
                         //display if player 1 has won
                         if(gameInfo.p1Points == 2)
                         {
+                            gameInfo.haveWinner = true;
                             updateClients("!!!!!!!! Player 1 has won with 2 points!");
+                            callback.accept("Player 1 has won");
+                            callback.accept("Going to victory stage of game");
+                            stageCounter++;
                         }
                         //display if player 2 has won
                         else if(gameInfo.p2Points == 2)
                         {
+                            gameInfo.haveWinner = true;
                             updateClients("!!!!!!!! Player 2 has won with 2 points!");
+                            callback.accept("Player 2 has won");
+                            callback.accept("Going to victory stage of game");
+                            stageCounter++;
                         }
                         //otherwise reset round by going back to 2nd stage and setting input count to 0
                         else {
@@ -262,10 +276,19 @@ public class Server{
                         }
                     }
 
+                    //This is the stage we come to if a player has won the game
+                    if(stageCounter == 4)
+                    {
+                        gameInfo.p1Points = 0;
+                        gameInfo.p2Points = 0;
+                        callback.accept("Waiting for players to decide if playing again");
+                    }
+
                 }
                 catch(Exception e) {
                     callback.accept("OOOOPPs...Something wrong with the socket from client: " + count + "....closing down!");
-                    //updateClients("Client #" + count + " has left the server!");
+                    updateClients("Your opponent has left...");
+                    updateClients("-------------------------");
                     clients.remove(this);
                     updateClients("Awaiting another player");
                     stageCounter = 1;
